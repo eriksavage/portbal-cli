@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-balancer-ca",
+  "version": "1.0.0",
+  "description": "Console application to balance an investment portfolio.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
