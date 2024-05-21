@@ -1,7 +1,12 @@
-"user strict";
+"use strict";
 
 function testJs() {
   console.log("Executed from test.js");
 };
 
-module.exports = { testJs };
+function test2() {
+  console.log("Test2");
+}
+
+// module.exports = { testJs };
+export { testJs, test2 };
