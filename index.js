@@ -2,78 +2,136 @@
 import { confirm, input, select } from '@inquirer/prompts';
 // import { testJs, test2 } from './test.js';
 
+class Portfolio {
+  constructor(name, description, asset) {
+    this.name = name;
+    this.description = description;
+    this.assets = [asset];
+  }
+}
+
+class Asset {
+  constructor(stockTicker, desiredPercentage, sharesOwned, currentSharePrice) {
+    this.stockTicker = stockTicker;
+    this.desiredPercentage = desiredPercentage;
+    this.sharesOwned = sharesOwned;
+    this.currentSharePrice = currentSharePrice;
+  }
+
+  get currentSharePriceCents() {
+    return this.currentSharePriceCents();
+  }
+
+  currentSharePriceCents() {
+    return Math.round(this.currentSharePrice * 100);
+  }
+}
+
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-const portfolio = {
-  assets: [],
-
-}
+const portfolios = [];
 let exit = false;
 
 while (exit != true) {
-  let selection = mainMenu();
-  console.log(selection)
+  let selection = await mainMenu();
+
   switch (selection) {
     case "exit":
       exit = true;
       break;
     case "view":
-      console.log(`You have selected: ${selection}`);
+      await viewPortfoliosMenu(portfolios);
       break;
     case "update":
       console.log(`You have selected: ${selection}`);
       break;
     case "create":
-      console.log(`You have selected: ${selection}`);
+      await createPortfolio();
       break;
     default:
       exit = true;
   }
 }
-const assets = [];
-// list assets, 
-// enter new assets
-// view portfolio %
-let answer;
-if (assets.length == 0) {
-  answer = await confirm({ message: 'No assets found, enter new asset?' });
-}
+// const assets = [];
 
-if (answer == true) {
-  const stockTicker = await input({ message: 'Enter stock ticker:' });
-  const portfolioPercentage = await input({ message: 'Enter desired portfolio percentage:' });
-  const sharesOwned = await input({ message: 'Enter shares owned:' });
-  const currentSharePrice = await input({ message: 'Enter current share price:' });
-}
+// let answer;
+// if (assets.length == 0) {
+//   answer = await confirm({ message: 'No assets found, enter new asset?' });
+// }
+
+// if (answer == true) {
+
+// }
 
 async function mainMenu() {
-  const answer = await select({
+  return await select({
     message: 'Select an action',
     choices: [
       {
         name: 'View Portfolio',
         value: 'view',
-        description: 'npm is the most popular package manager',
+        description: 'View an existing portfolio.',
       },
       {
         name: 'Update Portfolio',
         value: 'update',
-        description: 'yarn is an awesome package manager',
+        description: 'Update an existing portfolio.',
       },
       {
         name: 'Create Portfolio',
         value: 'create',
-        description: 'yarn is an awesome package manager',
+        description: 'Create a new portfolio.',
       },
       {
         name: 'Exit',
         value: 'exit',
-        description: 'yarn is an awesome package manager',
+        description: 'Exit the portfolio balancer.',
       }
     ],
   });
 }
 
+async function viewPortfoliosMenu(portfolios) {
+  if (portfolios.length > 0) {
+    let choices = portfolios.map(p => {
+      return {
+        name: p.name,
+        description: p.description,
+      }
+    })
+
+    return await select({
+      message: 'Select a portfolio to view.',
+      choices: choices,
+    });
+  }
+
+  console.log("No portfolios availble to view, please select Create Portfolio.");
+}
+
+async function createPortfolio() {
+  const name = (await input({ message: 'Enter portfolio name:' })).trim();
+  let description = (await input({ message: 'Enter portfolio description:' })).trim();
+  description = description ? description : name;
+  const portfolio = new Portfolio(name, description, await createAsset());
+
+  portfolios.push(portfolio);
+}
+
+async function createAsset() {
+  if (await confirmMessage("Create new asset?")) {
+    const stockTicker = await input({ message: 'Enter stock ticker:' });
+    const desiredPercentage = await input({ message: 'Enter desired portfolio percentage:' });
+    const sharesOwned = await input({ message: 'Enter shares owned:' });
+    const currentSharePrice = await input({ message: 'Enter current share price:' });
+
+    return new Asset(stockTicker, desiredPercentage, sharesOwned, currentSharePrice);
+  }
+}
+
+async function confirmMessage(message) {
+  return await confirm({ message: `${message}:` });
+}
 // testJs();
 // test2();
 
