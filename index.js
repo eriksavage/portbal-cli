@@ -1,5 +1,6 @@
 "use strict";
 import { confirm, input, select } from '@inquirer/prompts';
+import { JsonPersistence } from './jsonPersistence';
 // import { testJs, test2 } from './test.js';
 
 class Portfolio {
@@ -116,6 +117,7 @@ async function createPortfolio() {
   const portfolio = new Portfolio(name, description, await createAsset());
 
   portfolios.push(portfolio);
+  JsonPersistence.save(portfolios);
 }
 
 async function createAsset() {
