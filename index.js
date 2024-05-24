@@ -1,6 +1,6 @@
 "use strict";
 import { confirm, input, select } from '@inquirer/prompts';
-import { JsonPersistence } from './jsonPersistence';
+import { JsonPersistence } from './jsonPersistence.js';
 // import { testJs, test2 } from './test.js';
 
 class Portfolio {

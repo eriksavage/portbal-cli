@@ -7,7 +7,8 @@ class JsonPersistence {
 
   }
   static save(portfolios) {
-    portfoliosJson = JSON.stringify(portfolios);
+    const portfoliosJson = JSON.stringify(portfolios);
+
     fs.writeFile('./persistence.json', portfoliosJson, err => {
       if (err) console.error(err);
     });
