@@ -30,7 +30,8 @@ class Asset {
 
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-const portfolios = [];
+const portfolios = await JsonPersistence.read();
+console.log(portfolios);
 let exit = false;
 
 while (exit != true) {
@@ -93,7 +94,7 @@ async function mainMenu() {
 }
 
 async function viewPortfoliosMenu(portfolios) {
-  if (portfolios.length > 0) {
+  if (portfolios?.length > 0) {
     let choices = portfolios.map(p => {
       return {
         name: p.name,
