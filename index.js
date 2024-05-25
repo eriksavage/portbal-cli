@@ -1,6 +1,6 @@
 "use strict";
 import { confirm, input, select } from '@inquirer/prompts';
-// import { testJs, test2 } from './test.js';
+import { JsonPersistence } from './jsonPersistence.js';
 
 class Portfolio {
   constructor(name, description, asset) {
@@ -29,7 +29,7 @@ class Asset {
 
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-const portfolios = [];
+const portfolios = await JsonPersistence.read();
 let exit = false;
 
 while (exit != true) {
@@ -92,7 +92,7 @@ async function mainMenu() {
 }
 
 async function viewPortfoliosMenu(portfolios) {
-  if (portfolios.length > 0) {
+  if (portfolios?.length > 0) {
     let choices = portfolios.map(p => {
       return {
         name: p.name,
@@ -116,6 +116,7 @@ async function createPortfolio() {
   const portfolio = new Portfolio(name, description, await createAsset());
 
   portfolios.push(portfolio);
+  JsonPersistence.save(portfolios);
 }
 
 async function createAsset() {
