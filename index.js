@@ -1,7 +1,6 @@
 "use strict";
 import { confirm, input, select } from '@inquirer/prompts';
 import { JsonPersistence } from './jsonPersistence.js';
-// import { testJs, test2 } from './test.js';
 
 class Portfolio {
   constructor(name, description, asset) {
@@ -31,7 +30,6 @@ class Asset {
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
 const portfolios = await JsonPersistence.read();
-console.log(portfolios);
 let exit = false;
 
 while (exit != true) {
