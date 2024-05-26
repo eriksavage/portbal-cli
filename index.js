@@ -3,10 +3,14 @@ import { confirm, input, select } from '@inquirer/prompts';
 import { JsonPersistence } from './jsonPersistence.js';
 
 class Portfolio {
-  constructor(name, description, asset) {
+  constructor(name, description) {
     this.name = name;
     this.description = description;
-    this.assets = [asset];
+    this.assets = [];
+  }
+
+  addAsset(asset) {
+    this.assets.push(asset);
   }
 }
 
@@ -52,16 +56,6 @@ while (exit != true) {
       exit = true;
   }
 }
-// const assets = [];
-
-// let answer;
-// if (assets.length == 0) {
-//   answer = await confirm({ message: 'No assets found, enter new asset?' });
-// }
-
-// if (answer == true) {
-
-// }
 
 async function mainMenu() {
   return await select({
@@ -113,26 +107,28 @@ async function createPortfolio() {
   const name = (await input({ message: 'Enter portfolio name:' })).trim();
   let description = (await input({ message: 'Enter portfolio description:' })).trim();
   description = description ? description : name;
-  const portfolio = new Portfolio(name, description, await createAsset());
 
+  const portfolio = new Portfolio(name, description);
+
+  const numberOfAssets = (await input({ message: 'Enter number of assets:' })).trim();
+  const assets = [];
+  for (let i = 1; i <= numberOfAssets; i++) {
+    console.log(`Enter details for asset ${i}`)
+    assets.push(await createAsset())
+  }
   portfolios.push(portfolio);
   JsonPersistence.save(portfolios);
 }
 
 async function createAsset() {
-  if (await confirmMessage("Create new asset?")) {
-    const stockTicker = await input({ message: 'Enter stock ticker:' });
-    const desiredPercentage = await input({ message: 'Enter desired portfolio percentage:' });
-    const sharesOwned = await input({ message: 'Enter shares owned:' });
-    const currentSharePrice = await input({ message: 'Enter current share price:' });
+  const stockTicker = await input({ message: 'Enter stock ticker:' });
+  const desiredPercentage = await input({ message: 'Enter desired portfolio percentage:' });
+  const sharesOwned = await input({ message: 'Enter shares owned:' });
+  const currentSharePrice = await input({ message: 'Enter current share price:' });
 
-    return new Asset(stockTicker, desiredPercentage, sharesOwned, currentSharePrice);
-  }
+  return new Asset(stockTicker, desiredPercentage, sharesOwned, currentSharePrice);
 }
 
 async function confirmMessage(message) {
   return await confirm({ message: `${message}:` });
 }
-// testJs();
-// test2();
-
