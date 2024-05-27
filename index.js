@@ -6,11 +6,26 @@ class Portfolio {
   constructor(name, description) {
     this.name = name;
     this.description = description;
-    this.assets = [];
+    this.assets = []; //should this be an hash map of tickers to assets vs an array?
   }
 
   addAsset(asset) {
     this.assets.push(asset);
+  }
+
+  get totalValue() {
+    return this.totalValue();
+  }
+
+  totalValue() {
+    return this.assets.reduce((a, c) => a + (c.sharesOwned * c.currentSharePrice), 0)
+  }
+
+  calculateAssetPortfolioPercentages() {
+    this.assets.forEach(asset => {
+      let portfolioPercentage = asset.value / this.totalValue
+      asset.portfolioPercentage = portfolioPercentage;
+    });
   }
 }
 
@@ -22,12 +37,14 @@ class Asset {
     this.currentSharePrice = currentSharePrice;
   }
 
-  get currentSharePriceCents() {
-    return this.currentSharePriceCents();
+  portfolioPercentage = 0;
+
+  get value() {
+    return this.value();
   }
 
-  currentSharePriceCents() {
-    return Math.round(this.currentSharePrice * 100);
+  value() {
+    return this.sharesOwned * this.currentSharePrice;
   }
 }
 
@@ -45,6 +62,7 @@ while (exit != true) {
       break;
     case "view":
       await viewPortfoliosMenu(portfolios);
+      renderAssets(portfolios[0].assets)
       break;
     case "update":
       console.log(`You have selected: ${selection}`);
@@ -103,6 +121,21 @@ async function viewPortfoliosMenu(portfolios) {
   console.log("No portfolios availble to view, please select Create Portfolio.");
 }
 
+function renderAssets(assets) {
+  const assetsTable = assets.map(a => {
+    return {
+      'TICKER': a.stockTicker,
+      'SHARES': a.sharesOwned,
+      'PRICE': a.currentSharePrice,
+      'VALUE': a.sharesOwned * a.currentSharePrice,
+      '% ACT': a.portfolioPercentage,
+      '% DES': a.desiredPercentage
+    }
+  });
+
+  console.table(assetsTable);
+}
+
 async function createPortfolio() {
   const name = (await input({ message: 'Enter portfolio name:' })).trim();
   let description = (await input({ message: 'Enter portfolio description:' })).trim();
@@ -111,11 +144,12 @@ async function createPortfolio() {
   const portfolio = new Portfolio(name, description);
 
   const numberOfAssets = (await input({ message: 'Enter number of assets:' })).trim();
-  const assets = [];
+
   for (let i = 1; i <= numberOfAssets; i++) {
     console.log(`Enter details for asset ${i}`)
-    assets.push(await createAsset())
+    portfolio.addAsset(await createAsset());
   }
+  portfolio.calculateAssetPortfolioPercentages();
   portfolios.push(portfolio);
   JsonPersistence.save(portfolios);
 }
@@ -127,8 +161,4 @@ async function createAsset() {
   const currentSharePrice = await input({ message: 'Enter current share price:' });
 
   return new Asset(stockTicker, desiredPercentage, sharesOwned, currentSharePrice);
-}
-
-async function confirmMessage(message) {
-  return await confirm({ message: `${message}:` });
 }
