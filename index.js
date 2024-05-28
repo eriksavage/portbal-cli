@@ -13,9 +13,9 @@ class Portfolio {
     this.assets.push(asset);
   }
 
-  get totalValue() {
-    return this.totalValue();
-  }
+  // get totalValue() {
+  //   return this.totalValue();
+  // }
 
   totalValue() {
     return this.assets.reduce((a, c) => a + (c.sharesOwned * c.currentSharePrice), 0)
@@ -23,7 +23,8 @@ class Portfolio {
 
   calculateAssetPortfolioPercentages() {
     this.assets.forEach(asset => {
-      let portfolioPercentage = asset.value / this.totalValue
+
+      let portfolioPercentage = asset.value() / this.totalValue()
       asset.portfolioPercentage = portfolioPercentage;
     });
   }
@@ -39,9 +40,9 @@ class Asset {
 
   portfolioPercentage = 0;
 
-  get value() {
-    return this.value();
-  }
+  // get value() {
+  //   return this.value();
+  // }
 
   value() {
     return this.sharesOwned * this.currentSharePrice;
@@ -50,7 +51,13 @@ class Asset {
 
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-const portfolios = await JsonPersistence.read();
+let portfolios = await JsonPersistence.read();
+portfolios = portfolios.map(p => {
+  let portfolio = new Portfolio(p.name, p.description);
+  p.assets.map(a => portfolio.addAsset(new Asset(a.stockTicker, a.desiredPercentage, a.sharesOwned, a.currentSharePrice)));
+  return portfolio;
+})
+portfolios[0].calculateAssetPortfolioPercentages();
 let exit = false;
 
 while (exit != true) {
