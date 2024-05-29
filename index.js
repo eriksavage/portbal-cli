@@ -18,8 +18,8 @@ while (exit != true) {
       exit = true;
       break;
     case "view":
-      await viewPortfoliosMenu(portfolios);
-      renderAssets(portfolios[0].assets)
+      const portfolio = await viewPortfoliosMenu(portfolios);
+      renderAssets(portfolio.assets);
       break;
     case "update":
       console.log(`You have selected: ${selection}`);
@@ -65,14 +65,17 @@ async function viewPortfoliosMenu(portfolios) {
     let choices = portfolios.map(p => {
       return {
         name: p.name,
+        value: p.name,
         description: p.description,
       }
     })
 
-    return await select({
+    const selectedPortfolio = await select({
       message: 'Select a portfolio to view.',
       choices: choices,
     });
+
+    return portfolios.find(p => p.name === selectedPortfolio);
   }
 
   console.log("No portfolios availble to view, please select Create Portfolio.");
