@@ -1,63 +1,13 @@
 "use strict";
 import { confirm, input, select } from '@inquirer/prompts';
 import { JsonPersistence } from './jsonPersistence.js';
-
-class Portfolio {
-  constructor(name, description) {
-    this.name = name;
-    this.description = description;
-    this.assets = []; //should this be an hash map of tickers to assets vs an array?
-  }
-
-  addAsset(asset) {
-    this.assets.push(asset);
-  }
-
-  // get totalValue() {
-  //   return this.totalValue();
-  // }
-
-  totalValue() {
-    return this.assets.reduce((a, c) => a + (c.sharesOwned * c.currentSharePrice), 0)
-  }
-
-  calculateAssetPortfolioPercentages() {
-    this.assets.forEach(asset => {
-
-      let portfolioPercentage = asset.value() / this.totalValue()
-      asset.portfolioPercentage = portfolioPercentage;
-    });
-  }
-}
-
-class Asset {
-  constructor(stockTicker, desiredPercentage, sharesOwned, currentSharePrice) {
-    this.stockTicker = stockTicker;
-    this.desiredPercentage = desiredPercentage;
-    this.sharesOwned = sharesOwned;
-    this.currentSharePrice = currentSharePrice;
-  }
-
-  portfolioPercentage = 0;
-
-  // get value() {
-  //   return this.value();
-  // }
-
-  value() {
-    return this.sharesOwned * this.currentSharePrice;
-  }
-}
+import { Portfolio } from './models/portfolio.js';
+import { Asset } from './models/asset.js';
 
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
 let portfolios = await JsonPersistence.read();
-portfolios = portfolios.map(p => {
-  let portfolio = new Portfolio(p.name, p.description);
-  p.assets.map(a => portfolio.addAsset(new Asset(a.stockTicker, a.desiredPercentage, a.sharesOwned, a.currentSharePrice)));
-  return portfolio;
-})
-portfolios[0].calculateAssetPortfolioPercentages();
+portfolios[0]?.calculateAssetPortfolioPercentages();
 let exit = false;
 
 while (exit != true) {
