@@ -9,6 +9,7 @@ class Asset {
   }
 
   portfolioPercentage = 0;
+  sharesToBuy = 0;
 
   // get value() {
   //   return this.value();

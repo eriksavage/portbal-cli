@@ -101,11 +101,12 @@ async function portfolioMenu() {
   });
 }
 
-function renderAssets(assets) {
+function renderAssets(assets, forPurchase = false) {
+  if (forPurchase) console.log("Purchase Quantities for Dollar Cost Average:");
   const assetsTable = assets.map(a => {
     return {
       'TICKER': a.stockTicker,
-      'SHARES': a.sharesOwned,
+      'SHARES': forPurchase ? a.sharesToBuy : a.sharesOwned,
       'PRICE': a.currentSharePrice,
       'VALUE': a.sharesOwned * a.currentSharePrice,
       '% ACT': a.portfolioPercentage,
@@ -146,21 +147,41 @@ async function createAsset() {
 async function dollarCostAverage(portfolio) {
   //TODO: seperate out menu portion from dca calculation locgicce
   const dcaAmount = await input({ message: 'Enter dollar amount for Dollar Cost Averaging:' });
+  let answer;
+  let assets = [];
+  for (let i = 0; i < portfolio.assets.length; i++) {
+    assets.push(portfolio.assets[i]);
+    let a = assets[i];
 
-  const assets = portfolio.assets.map(async a => {
-    let answer = await confirm({ message: `Confirm ${a.stockTicker} Shares Owned = ${a.sharesOwned}` });
+    answer = await confirm({ message: `Confirm ${a.stockTicker} Shares Owned = ${a.sharesOwned}` });
     if (answer == false) a.sharesOwned = await input({ message: 'Enter shares owned:' });
 
     answer = await confirm({ message: `Confirm ${a.stockTicker} Current Share Price = ${a.currentSharePrice}` });
     if (answer == false) a.currentSharePrice = await input({ message: 'Enter current share price:' });
-  })
+  }
+
   portfolio.assets = assets;
 
-  calculateDCA(portfolio);
+  let dcaAssets = calculateDCA(dcaAmount, portfolio);
+
+  renderAssets(dcaAssets, true);
+  answer = await confirm({ message: `Proceed with purchase and Update portfolio?` });
+  if (answer == true) portfolio.assets = dcaAssets;
 
   return portfolio;
 }
 
-function calculateDCA(portfolio) {
+function calculateDCA(dcaAmount, portfolio) {
+  const totalValue = portfolio.totalValue() + dcaAmount;
+  let remainder = dcaAmount;
+  let dcaAssets = portfolio.assets.map(a => {
+    const portfolioNumSharesTarget = Math.floor((totalValue * (a.desiredPercentage / 100)) / a.currentSharePrice);
+    const sharesToBuy = portfolioNumSharesTarget - a.sharesOwned > 0 ? portfolioNumSharesTarget - a.sharesOwned : 0;
+    a.sharesToBuy = sharesToBuy * a.currentSharePrice > dcaAmount ? Math.floor(dcaAmount / a.currentSharePrice) : sharesToBuy;
+    remainder -= a.sharesToBuy * a.currentSharePrice;
+    return a;
+  });
 
+  // TODO: if there is an excessive remainder, recursively? look at the assets and see if additional funds can be invested there
+  return dcaAssets;
 }
