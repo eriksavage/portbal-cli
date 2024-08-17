@@ -1,36 +1,45 @@
-"use strict";
 import { confirm, input, select } from '@inquirer/prompts';
-import { JsonPersistence } from './jsonPersistence.js';
-import { Portfolio } from './models/portfolio.js';
+
 import { Asset } from './models/asset.js';
+import { Portfolio } from './models/portfolio.js';
+import { JsonPersistence } from './state/json-persistence.js';
 
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-let portfolios = await JsonPersistence.read();
+const portfolios = await JsonPersistence.read();
 portfolios[0]?.calculateAssetPortfolioPercentages();
 let exit = false;
 
-while (exit != true) {
-  let selection = await mainMenu();
+while (exit !== true) {
+  const selection = await mainMenu();
 
   switch (selection) {
-    case "exit":
+    case "exit": {
       exit = true;
       break;
-    case "view":
+    }
+
+    case "view": {
       const portfolio = await viewPortfoliosMenu(portfolios);
       renderAssets(portfolio.assets);
       const action = await portfolioMenu()
       if (action === "dca") await dollarCostAverage(portfolio);
       break;
-    case "update":
+    }
+
+    case "update": {
       console.log(`You have selected: ${selection}`);
       break;
-    case "create":
+    }
+
+    case "create": {
       await createPortfolio();
       break;
-    default:
+    }
+
+    default: {
       exit = true;
+    }
   }
 }
 
