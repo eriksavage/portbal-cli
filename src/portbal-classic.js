@@ -2,11 +2,12 @@ import { confirm, input, select } from '@inquirer/prompts';
 
 import { Asset } from './models/asset.js';
 import { Portfolio } from './models/portfolio.js';
-import { JsonPersistence } from './state/json-persistence.js';
+import { JsonState } from './state/json-state.js';
 
+const portfolioState = new JsonState("portfolios");
 const fill = "####################"
 console.log(`${fill} PORTFOLIO BALANCER ${fill}`);
-const portfolios = await JsonPersistence.read();
+const portfolios = await portfolioState.read();
 portfolios[0]?.calculateAssetPortfolioPercentages();
 let exit = false;
 
@@ -21,6 +22,8 @@ while (exit !== true) {
 
     case "view": {
       const portfolio = await viewPortfoliosMenu(portfolios);
+      console.log(portfolio);
+      if (portfolio === null || portfolio === undefined) break;
       renderAssets(portfolio.assets);
       const action = await portfolioMenu()
       if (action === "dca") await dollarCostAverage(portfolio);
@@ -141,7 +144,7 @@ async function createPortfolio() {
   }
   portfolio.calculateAssetPortfolioPercentages();
   portfolios.push(portfolio);
-  JsonPersistence.save(portfolios);
+  portfolioState.save(portfolios);
 }
 
 async function createAsset() {

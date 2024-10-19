@@ -1,5 +1,6 @@
 # App Specific
-persistence.json
+portfolios.json
+assets.json
 
 # Oclif Defaults
 *-debug.log
