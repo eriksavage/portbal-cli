@@ -1,19 +1,17 @@
-"use strict";
-
 class Asset {
-  constructor(stockTicker, desiredPercentage, sharesOwned, currentSharePrice) {
+  currentSharePrice: number
+  desiredPercentage: number
+  portfolioPercentage: number = 0;
+  sharesOwned: number
+  sharesToBuy: number = 0;
+  stockTicker: string
+  
+  constructor(stockTicker: string, desiredPercentage: number, sharesOwned: number, currentSharePrice: number) {
     this.stockTicker = stockTicker;
     this.desiredPercentage = desiredPercentage;
     this.sharesOwned = sharesOwned;
     this.currentSharePrice = currentSharePrice;
   }
-
-  portfolioPercentage = 0;
-  sharesToBuy = 0;
-
-  // get value() {
-  //   return this.value();
-  // }
 
   value() {
     return this.sharesOwned * this.currentSharePrice;
