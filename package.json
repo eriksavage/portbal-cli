@@ -11,7 +11,9 @@
     "@inquirer/prompts": "^5.3.8",
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
-    "@oclif/plugin-plugins": "^5"
+    "@oclif/plugin-plugins": "^5",
+    "nock": "^13.5.5",
+    "sinon": "^19.0.2"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
@@ -19,6 +21,7 @@
     "@types/chai": "^4",
     "@types/mocha": "^10",
     "@types/node": "^18",
+    "@types/sinon": "^17.0.3",
     "chai": "^4",
     "eslint": "^8",
     "eslint-config-oclif": "^5",
