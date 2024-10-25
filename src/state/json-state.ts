@@ -7,7 +7,9 @@ enum StateType {
   Assets = "ASSETS",
   Portfolios = "PORTFOLIOS",
 }
-
+interface StateData {
+  portfolios: Portfolio[]
+}
 class JsonState {
   type: StateType
 
@@ -16,33 +18,35 @@ class JsonState {
   }
 
   filepath() {
-    const type: string = this.type.toLowerCase();
-    return `./src/state/${type}.json`;
+    return `./src/state/state.json`;
   }
 
   async read() {
     try {
       const data = await fs.promises.readFile(this.filepath(), 'utf8');
-      const portfolioData: Portfolio[] = JSON.parse(data);
-
-      return portfolioData.map(p => {
-        const portfolio = new Portfolio(p.name, p.description);
-        p.assets.map(a => portfolio.addAsset(new Asset(a.stockTicker, a.desiredPercentage, a.sharesOwned, a.currentSharePrice)));
-        return portfolio;
-      })
+      const stateData: StateData = JSON.parse(data);
+      return this.getPortfolios(stateData.portfolios);
     } catch (error) {
-      console.log("⚠️ No Portfolios on File, Select Create Portfolio, to Add a Portfolio.");
+      console.log("No state file has been created.");
       console.log(error);
       return [];
     }
   }
 
-  save(data: Asset[]|Portfolio[]) {
-    const dataJson = JSON.stringify(data);
+  save(data: Portfolio[]) {
+    const dataJson = JSON.stringify({portfolios: data});
 
     fs.writeFile(this.filepath(), dataJson, err => {
       if (err) console.error(err);
     });
+  }
+
+  private getPortfolios(portfolios: Portfolio[]) {
+    return portfolios.map(p => {
+      const portfolio = new Portfolio(p.name, p.description);
+      p.assets.map(a => portfolio.addAsset(new Asset(a.stockTicker, a.desiredPercentage, a.sharesOwned, a.currentSharePrice)));
+      return portfolio;
+    })
   }
 };
 
