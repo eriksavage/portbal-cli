@@ -3,36 +3,36 @@
     {
       "name": "Erik",
       "description": "Erik",
-      "assets": [
+      "holdings": [
         {
           "portfolioPercentage": 0.7,
           "sharesToBuy": 0,
-          "stockTicker": "VTI",
-          "desiredPercentage": "70",
-          "sharesOwned": "70",
-          "currentSharePrice": "10"
+          "symbol": "VTI",
+          "targetPercentage": "70",
+          "shares": "70",
+          "sharePrice": "10"
         },
         {
           "portfolioPercentage": 0.3,
           "sharesToBuy": 0,
-          "stockTicker": "VXUS",
-          "desiredPercentage": "30",
-          "sharesOwned": "30",
-          "currentSharePrice": "10"
+          "symbol": "VXUS",
+          "targetPercentage": "30",
+          "shares": "30",
+          "sharePrice": "10"
         }
       ]
     },
     {
       "name": "Amy",
       "description": "Amy",
-      "assets": [
+      "holdings": [
         {
           "portfolioPercentage": 1,
           "sharesToBuy": 0,
-          "stockTicker": "AMZN",
-          "desiredPercentage": "100",
-          "sharesOwned": "920",
-          "currentSharePrice": "172"
+          "symbol": "AMZN",
+          "targetPercentage": "100",
+          "shares": "920",
+          "sharePrice": "172"
         }
       ]
     }

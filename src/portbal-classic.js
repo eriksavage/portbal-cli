@@ -1,6 +1,6 @@
 import { confirm, input, select } from '@inquirer/prompts';
 
-import { Asset } from './models/asset.js';
+import { Asset } from './models/holding.js';
 import { Portfolio } from './models/portfolio.js';
 import { JsonState } from './state/json-state.js';
 

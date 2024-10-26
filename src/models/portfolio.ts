@@ -1,31 +1,31 @@
-import { Asset } from "../models/asset.js"
+import { Holding } from "./holding.js"
 
 class Portfolio {
-  assets: Asset[]
   description: string
+  holdings: Holding[]
   name: string
   
 
 
   constructor(name: string, description: string) {
-    this.name = name;
     this.description = description;
-    this.assets = []; 
+    this.holdings = []; 
+    this.name = name;
   }
 
-  addAsset(asset: Asset) {
-    this.assets.push(asset);
+  addHolding(holding: Holding) {
+    this.holdings.push(holding);
   }
 
-  calculateAssetPortfolioPercentages() {
-    for (const asset of this.assets) {
-      const portfolioPercentage = asset.value() / this.totalValue()
-      asset.portfolioPercentage = portfolioPercentage;
+  calculateHoldingPortfolioPercentages() {
+    for (const holding of this.holdings) {
+      const portfolioPercentage = holding.value() / this.totalValue()
+      holding.portfolioPercentage = portfolioPercentage;
     }
   }
 
   totalValue() {
-    return this.assets.reduce((a, c) => a + (c.sharesOwned * c.currentSharePrice), 0)
+    return this.holdings.reduce((a, c) => a + (c.shares * c.sharePrice), 0)
   }
 
 
