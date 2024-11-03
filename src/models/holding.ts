@@ -15,6 +15,7 @@ class Holding {
   value() {
     return this.shares * this.sharePrice;
   }
+
   // TODO: add a getter for Holding price based off symbol.
 }
 
