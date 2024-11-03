@@ -2,6 +2,7 @@ import {runCommand} from '@oclif/test'
 import {expect} from 'chai'
 import sinon from 'sinon'
 
+import {Asset} from '../../src/models/asset.js'
 import {Portfolio} from '../../src/models/portfolio.js'
 import {JsonState} from '../../src/state/json-state.js'
 
@@ -14,12 +15,17 @@ describe('list command', () => {
     stateStub = sinon.createStubInstance(JsonState);
 
     // Replace the 'read' method to return dummy data
-    stateStub.read.resolves([
+    stateStub.getPortfolios.resolves([
       new Portfolio ("Test Portfolio", "Portfolio for tests.")
     ])
 
+    stateStub.getAssets.resolves([
+      new Asset("SYMBOL", "Asset Name", 100)
+    ])
+
     // Stub the constructor of JsonState to always return our stub instance
-    sinon.stub(JsonState.prototype, 'read').value(stateStub.read);
+    sinon.stub(JsonState.prototype, 'getPortfolios').value(stateStub.getPortfolios);
+    sinon.stub(JsonState.prototype, 'getAssets').value(stateStub.getAssets);
   });
 
   afterEach(() => {
@@ -33,11 +39,12 @@ describe('list command', () => {
     expect(stdout).to.contain('Saved Portfolios:')
     expect(stdout).to.contain('- Test Portfolio')
     expect(stdout).to.contain('Saved Assets:')
-    expect(stdout).to.contain('- No Saved Assets.')
+    expect(stdout).to.contain('- SYMBOL: Asset Name')
   });
 
   it('returns message when no Portfolios or Assets are saved', async () => {
-    stateStub.read.resolves([]);
+    stateStub.getPortfolios.resolves([]);
+    stateStub.getAssets.resolves([]);
     const {stdout} = await runCommand('list')
 
     expect(stdout).to.contain('Saved Portfolios:')
@@ -65,6 +72,7 @@ describe('list command', () => {
       const {stdout} = await runCommand('list -a')
 
       expect(stdout).to.contain('Saved Assets:')
+      expect(stdout).to.contain('- SYMBOL: Asset Name')
       expect(stdout).to.not.contain('Saved Portfolios:')
     });
 
@@ -72,6 +80,7 @@ describe('list command', () => {
       const {stdout} = await runCommand('list --assets')
 
       expect(stdout).to.contain('Saved Assets:')
+      expect(stdout).to.contain('- SYMBOL: Asset Name')
       expect(stdout).to.not.contain('Saved Portfolios:')
     });
   });

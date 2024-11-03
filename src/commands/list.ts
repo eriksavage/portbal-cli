@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 
-import { JsonState, StateType } from '../state/json-state.js'
+import { JsonState } from '../state/json-state.js'
 
 export default class List extends Command {
 
@@ -19,10 +19,10 @@ export default class List extends Command {
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(List)
-    const state: JsonState = new JsonState(StateType.Portfolios)
-    const portfolios = await state.read();
-
+    const state: JsonState = new JsonState();
+    
     if (!flags.assets) {
+      const portfolios = await state.getPortfolios();
       this.log("Saved Portfolios:")
       if (portfolios.length > 0) {
         for (const portfolio of portfolios) {
@@ -34,9 +34,15 @@ export default class List extends Command {
     }
 
     if (!flags.portfolios) {
-      // TODO: implement Asset state & update list test
+      const assets = await state.getAssets();
       this.log("Saved Assets:")
-      this.log("- No Saved Assets.") 
+      if (assets.length > 0) {
+        for (const asset of assets) {
+          this.log(`- ${asset.symbol}: ${asset.name}`);
+        }
+      } else {
+        this.log("- No Saved Assets.") 
+      }
     }
   }
 }

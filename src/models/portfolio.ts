@@ -5,8 +5,6 @@ class Portfolio {
   holdings: Holding[]
   name: string
   
-
-
   constructor(name: string, description: string) {
     this.description = description;
     this.holdings = []; 
@@ -27,8 +25,6 @@ class Portfolio {
   totalValue() {
     return this.holdings.reduce((a, c) => a + (c.shares * c.sharePrice), 0)
   }
-
-
 }
 
 export { Portfolio }

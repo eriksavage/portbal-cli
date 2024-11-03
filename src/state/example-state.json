@@ -1,0 +1,57 @@
+{
+  "portfolios": [
+    {
+      "name": "Erik",
+      "description": "Erik",
+      "holdings": [
+        {
+          "portfolioPercentage": 0.7,
+          "sharesToBuy": 0,
+          "symbol": "VTI",
+          "targetPercentage": "70",
+          "shares": "70",
+          "sharePrice": "10"
+        },
+        {
+          "portfolioPercentage": 0.3,
+          "sharesToBuy": 0,
+          "symbol": "VXUS",
+          "targetPercentage": "30",
+          "shares": "30",
+          "sharePrice": "10"
+        }
+      ]
+    },
+    {
+      "name": "Amy",
+      "description": "Amy",
+      "holdings": [
+        {
+          "portfolioPercentage": 1,
+          "sharesToBuy": 0,
+          "symbol": "AMZN",
+          "targetPercentage": "100",
+          "shares": "920",
+          "sharePrice": "172"
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "symbol": "VTI",
+      "name": "Vanguard Total Stock Market Index Fund ETF",
+      "price": 285.00
+    },
+    {
+      "symbol": "VXUS",
+      "name": "Vanguard Total International Stock Index Fund ETF",
+      "price": 63.00
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon",
+      "price": 188.00
+    }
+  ]
+}
