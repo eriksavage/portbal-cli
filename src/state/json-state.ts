@@ -26,14 +26,18 @@ class JsonState {
   }
 
   async getPortfolios() {
-
-    const stateData = await this.read()
- 
+    const stateData = await this.read();
     if (stateData === null) return [];
-
-    return stateData.portfolios.map(p => {
+    
+    const {assets, portfolios} = stateData;
+    return portfolios.map(p => {
       const portfolio = new Portfolio(p.name, p.description);
-      p.holdings.map(h => portfolio.addHolding(new Holding(h.symbol, h.targetPercentage, h.shares, h.sharePrice)));
+      for ( const h of p.holdings) {
+        portfolio.addHolding(
+          new Holding(h.symbol, h.targetPercentage, h.shares, this.assetPriceBySymbol(h.symbol, assets))
+        ); 
+      }
+
       return portfolio;
     })
   }
@@ -63,6 +67,16 @@ class JsonState {
     fs.writeFile(this.filepath(), dataJson, err => {
       if (err) console.error(err);
     });
+  }
+
+  private assetPriceBySymbol(symbol: string, assets: Asset[]):number {
+   let price = 0;
+
+    for (const asset of assets) {
+      if (asset.symbol === symbol) price = asset.price;
+   }
+
+   return price;
   }
 
   private async read() {
