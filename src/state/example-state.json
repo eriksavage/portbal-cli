@@ -1,6 +1,6 @@
 {
-  "portfolios": [
-    {
+  "portfolios": {
+    "erik": {
       "name": "Erik",
       "description": "Erik",
       "holdings": [
@@ -22,7 +22,7 @@
         }
       ]
     },
-    {
+    "amy": {
       "name": "Amy",
       "description": "Amy",
       "holdings": [
@@ -36,22 +36,22 @@
         }
       ]
     }
-  ],
-  "assets": [
-    {
+  },
+  "assets": {
+    "vti": {
       "symbol": "VTI",
       "name": "Vanguard Total Stock Market Index Fund ETF",
       "price": 285.00
     },
-    {
+    "vxus": {
       "symbol": "VXUS",
       "name": "Vanguard Total International Stock Index Fund ETF",
       "price": 63.00
     },
-    {
+    "amzn": {
       "symbol": "AMZN",
       "name": "Amazon",
       "price": 188.00
     }
-  ]
+  }
 }

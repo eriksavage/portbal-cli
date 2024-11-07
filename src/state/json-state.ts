@@ -99,7 +99,7 @@ class JsonState {
   }
 
   private assetPriceBySymbol(symbol: string, assets: Assets):number {
-    return assets[symbol].price;
+    return assets[symbol.toLowerCase()].price;
   }
 
   private async read() {
