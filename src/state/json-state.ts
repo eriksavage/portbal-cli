@@ -4,25 +4,57 @@ import { Asset } from '../models/asset.js';
 import { Holding } from '../models/holding.js';
 import { Portfolio } from '../models/portfolio.js';
 
-enum StateType {
-  Assets = "ASSETS",
-  Portfolios = "PORTFOLIOS",
+interface Assets {
+  [key: string]: Asset
 }
+
+interface Portfolios {
+  [key: string]: Portfolio
+}
+
 interface StateData {
-  assets: Asset[]
-  portfolios: Portfolio[]
+  assets:  Assets
+  portfolios: Portfolios
 }
+
 class JsonState {
   filepath() {
     return `./src/state/example-state.json`;
   }
   
+  async getAsset(symbol: string) {
+    const stateData = await this.read();
+    if (stateData === null) return null;
+    const asset = stateData.assets[symbol.toUpperCase().trim()]
+
+    return new Asset(asset.symbol, asset.name, asset.price);
+  }
+
   async getAssets() {
-    const stateData = await this.read()
+    const stateData = await this.read();
  
     if (stateData === null) return [];
 
-    return stateData.assets.map(a => new Asset(a.symbol, a.name, a.price));
+    return Object.keys(stateData.assets).map(key => {
+      const asset = stateData.assets[key];
+      return new Asset(asset.symbol, asset.name, asset.price);
+    })
+  }
+
+  async getPortfolio(name: string) {
+    const stateData = await this.read();
+    if (stateData === null) return null;
+    // how do we want to store the portfolio names
+    const portfolioState = stateData.portfolios[name.toLowerCase().trim()];
+
+    const portfolio = new Portfolio(portfolioState.name, portfolioState.description);
+    for(const holding of portfolioState.holdings) {
+      portfolio.addHolding(
+        new Holding(holding.symbol, holding.targetPercentage, holding.shares, this.assetPriceBySymbol(holding.symbol, stateData.assets))
+      );
+    }
+
+    return portfolio;
   }
 
   async getPortfolios() {
@@ -30,7 +62,8 @@ class JsonState {
     if (stateData === null) return [];
     
     const {assets, portfolios} = stateData;
-    return portfolios.map(p => {
+    return Object.keys(portfolios).map( key => {
+      const p = portfolios[key];
       const portfolio = new Portfolio(p.name, p.description);
       for ( const h of p.holdings) {
         portfolio.addHolding(
@@ -42,24 +75,20 @@ class JsonState {
     })
   }
 
-  isAssetArray(data: Asset[] | Portfolio[]): data is Asset[] {
-    return data[0] instanceof Asset;
-  }
-
-  async save(data: Asset[] | Portfolio[]) {
+  async save(data: Asset | Portfolio) {
     let stateData = await this.read();
     
     if (stateData === null) {
       stateData = {
-        assets: [],
-        portfolios: [],
+        assets: {},
+        portfolios: {},
       }
     }
 
-    if (this.isAssetArray(data)) {
-      stateData.assets = data;
+    if (data instanceof Asset) {
+      stateData.assets[data.symbol.toLowerCase()] = data ;
     } else {
-      stateData.portfolios = data;
+      stateData.portfolios[data.name] = data;
     }
 
     const dataJson = JSON.stringify({stateData});
@@ -69,14 +98,8 @@ class JsonState {
     });
   }
 
-  private assetPriceBySymbol(symbol: string, assets: Asset[]):number {
-   let price = 0;
-
-    for (const asset of assets) {
-      if (asset.symbol === symbol) price = asset.price;
-   }
-
-   return price;
+  private assetPriceBySymbol(symbol: string, assets: Assets):number {
+    return assets[symbol.toLowerCase()].price;
   }
 
   private async read() {
@@ -92,4 +115,4 @@ class JsonState {
   }
 };
 
-export { JsonState, StateType };
+export { JsonState };
